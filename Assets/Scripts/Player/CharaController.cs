@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
 using static UnityEngine.UI.Image;
@@ -66,15 +67,19 @@ public class CharaController : MonoBehaviour
 
     private void OnFaceChanged()
     {
-        if (Mathf.Abs(constraint.gravityResult.normal.x) > 0.01f)
+        if (Mathf.Abs(constraint.gravityResult.normal.axis.x) > 0.01f)
         {
             //Debug.Log($"X {constraint.gravityResult.normal.x}");
-            transform.position = new Vector2(constraint.gravityResult.normal.x, transform.position.y);
+            transform.position = new Vector2(constraint.gravityResult.normal.axis.x, transform.position.y);
+            float sign = Mathf.Sign(constraint.gravityResult.normal.center.y - transform.position.y);
+            transform.position = new Vector2(transform.position.x, transform.position.y + oc.bounds.size.x * sign);
         }
-        if (Mathf.Abs(constraint.gravityResult.normal.y) > 0.01f)
+        if (Mathf.Abs(constraint.gravityResult.normal.axis.y) > 0.01f)
         {
             //Debug.Log($"Y {constraint.gravityResult.normal.y}");
-            transform.position = new Vector2(transform.position.x, constraint.gravityResult.normal.y);
+            transform.position = new Vector2(transform.position.x, constraint.gravityResult.normal.axis.y);
+            float sign = Mathf.Sign(constraint.gravityResult.normal.center.x - transform.position.x);
+            transform.position = new Vector2(transform.position.x + oc.bounds.size.x * sign, transform.position.y);
         }
     }
 

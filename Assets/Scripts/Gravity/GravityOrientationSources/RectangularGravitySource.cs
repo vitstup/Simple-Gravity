@@ -17,6 +17,7 @@ public class RectangularGravitySource : GravityOrientationSource
 
         Vector2 direction;
         Vector2 normalOfObject;
+        Vector2 normalCenter;
         float angle;
 
         // Проверяем вертикальные грани
@@ -26,6 +27,7 @@ public class RectangularGravitySource : GravityOrientationSource
             direction = new Vector2(0, 1);
             angle = 90f;
             normalOfObject = new Vector2(b.min.x - ob.size.y * 0.51f, 0f);
+            normalCenter = new Vector2(b.min.x, b.center.y); 
         }
         else if (ob.min.x > b.max.x)
         {
@@ -33,6 +35,7 @@ public class RectangularGravitySource : GravityOrientationSource
             direction = new Vector2(0, -1);
             angle = -90f;
             normalOfObject = new Vector2(b.max.x + ob.size.y * 0.51f, 0f);
+            normalCenter = new Vector2(b.max.x, b.center.y);
         }
         // Проверяем горизонтальные грани
         else if (ob.max.y > b.max.y)
@@ -41,6 +44,7 @@ public class RectangularGravitySource : GravityOrientationSource
             direction = new Vector2(1, 0);
             angle = 0f;
             normalOfObject = new Vector2(0, b.max.y + ob.size.y * 0.51f);
+            normalCenter = new Vector2(b.center.x, b.max.y);
         }
         else
         {
@@ -48,6 +52,7 @@ public class RectangularGravitySource : GravityOrientationSource
             direction = new Vector2(-1, 0);
             angle = 180f;
             normalOfObject = new Vector2(0, b.min.y - ob.size.y * 0.51f);
+            normalCenter = new Vector2(b.center.x, b.min.y);
         }
 
         Quaternion rotation = Quaternion.Euler(0, 0, angle);
@@ -56,7 +61,7 @@ public class RectangularGravitySource : GravityOrientationSource
         {
             rotation = rotation,
             direction = direction,
-            normal = normalOfObject
+            normal = new Normal { axis = normalOfObject, center = normalCenter }
         };
     }
 

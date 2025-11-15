@@ -9,5 +9,11 @@ public struct GravityResult
 {
     public Quaternion rotation;
     public Vector2 direction;
-    public Vector2 normal;
+    public Normal normal;
+}
+
+public struct Normal
+{
+    public Vector2 axis;
+    public Vector2 center;
 }
