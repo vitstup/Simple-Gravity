@@ -27,7 +27,10 @@ public class GravityConstraint : MonoBehaviour
         oc = GetComponent<Collider2D>();
 
         rb.gravityScale = 0;
+    }
 
+    private void Start()
+    {
         gravityResult = gravitySource.GetOrientation(oc);
 
         transform.rotation = gravityResult.rotation;
