@@ -1,12 +1,11 @@
 using System;
-using Unity.Mathematics;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
-using static UnityEngine.UI.Image;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(Collider2D), typeof(GravityConstraint))]
+[RequireComponent(typeof(Collider2D), typeof(GravityConstraint))]
 public class CharaController : MonoBehaviour
 {
+    public Action<Vector2, Quaternion, Vector2, Quaternion> EdgeEvent;
+
     [SerializeField] private InputHandler inputHandler;
 
     [SerializeField] private float movementSpeed;
@@ -14,8 +13,6 @@ public class CharaController : MonoBehaviour
 
     [SerializeField] private float groundCheckDistance = 0.05f;
     [SerializeField] private LayerMask groundMask;
-
-    private Rigidbody2D rb;
 
     private Collider2D oc;
 
@@ -39,8 +36,6 @@ public class CharaController : MonoBehaviour
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-
         oc = GetComponent<Collider2D>();
 
         constraint = GetComponent<GravityConstraint>();
@@ -49,8 +44,8 @@ public class CharaController : MonoBehaviour
     private void OnEnable()
     {
         inputHandler.MoveActionEvent += (v) => Move(v);
-        inputHandler.JumpActionEvent += () => Jump();
-        constraint.GravityFaceChangedEvent += (p, n) => OnFaceChanged();
+        inputHandler.JumpActionEvent += Jump;
+        constraint.GravityFaceChangedEvent += OnFaceChanged;
     }
 
     private void Move(float moveVector)
@@ -65,8 +60,10 @@ public class CharaController : MonoBehaviour
             constraint.AddForceRelativeToGravity(jumpForce);
     }
 
-    private void OnFaceChanged()
+    private void OnFaceChanged(Quaternion p, Quaternion n)
     {
+        var previosPos = transform.position;
+
         if (Mathf.Abs(constraint.gravityResult.normal.axis.x) > 0.01f)
         {
             //Debug.Log($"X {constraint.gravityResult.normal.x}");
@@ -81,6 +78,8 @@ public class CharaController : MonoBehaviour
             float sign = Mathf.Sign(constraint.gravityResult.normal.center.x - transform.position.x);
             transform.position = new Vector2(transform.position.x + oc.bounds.size.x * sign, transform.position.y);
         }
+
+        EdgeEvent?.Invoke(previosPos, p, transform.position, n);
     }
 
     private RaycastHit2D GroundCast(Vector2 origin)
@@ -96,7 +95,7 @@ public class CharaController : MonoBehaviour
     private void OnDisable()
     {
         inputHandler.MoveActionEvent -= (v) => Move(v);
-        inputHandler.JumpActionEvent -= () => Jump();
-        constraint.GravityFaceChangedEvent -= (p, n) => OnFaceChanged();
+        inputHandler.JumpActionEvent -= Jump;
+        constraint.GravityFaceChangedEvent -= OnFaceChanged;
     }
 }

@@ -1304,6 +1304,10 @@ PrefabInstance:
       propertyPath: gravitySource
       value: 
       objectReference: {fileID: 2042157150}
+    - target: {fileID: 8620468710893831677, guid: 4d99fb798a0d8da4fa2c6de6f0a61746, type: 3}
+      propertyPath: animDuration
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 8642155912415912401, guid: 4d99fb798a0d8da4fa2c6de6f0a61746, type: 3}
       propertyPath: inputHandler
       value: 
